@@ -1,0 +1,44 @@
+steps:
+  - task: NuGetToolInstaller@1
+    displayName: "Install Nuget If Needed"
+
+  - task: UseDotNet@2
+    displayName: "Install .NET 7 SDK"
+    inputs:
+      packageType: "sdk"
+      version: "7.0.x"
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore nuget packages
+    inputs:
+      command: "restore"
+      projects: "$(solution)"
+      includeNuGetOrg: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build API Project
+    inputs:
+      command: "build"
+      projects: "$(Build.SourcesDirectory)/$(solution)"
+      arguments: "--configuration $(BuildConfiguration)"
+
+  - task: CopyFiles@2
+    displayName: "Copy migration scripts"
+    inputs:
+      sourceFolder: "$(Build.SourcesDirectory)/$(apiDirectory)/src/MigrationScripts"
+      contents: "**"
+      targetFolder: "$(Build.ArtifactStagingDirectory)/MigrationScripts"
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish API
+    inputs:
+      command: publish
+      publishWebProjects: true
+      arguments: "--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+      zipAfterPublish: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish artifacts"
+    inputs:
+      targetPath: $(Build.ArtifactStagingDirectory)
+      artifactName: HelloBearArtifacts

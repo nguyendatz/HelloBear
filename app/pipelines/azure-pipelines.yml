@@ -1,0 +1,31 @@
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildJob
+        displayName: Build Client App
+        variables:
+          npm_config_cache: $(Build.SourcesDirectory)/app/node_modules
+          npmCacheKeyPrefix: 'hellobear_npm_cache_key_v1'
+          webAppDirectory: 'app'
+        steps:
+          - bash: |
+              echo "Environment: $(ENVIRONMENT_NAME)"
+          - template: templates/build-stage.yml
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: succeeded('Build')
+    jobs:
+      - deployment: DeployClientApp
+        displayName: Deploy Client App
+        environment: $(environment_name)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../../templates/deploy-stage.yml
+                  parameters:
+                    azure_service_connection: '$(azure_service_connection)'
+                    app_service_name: '$(app_service_name)'
+                    resource_group: '$(resource_group_main)'
+                    package_name: 'client-app.zip'

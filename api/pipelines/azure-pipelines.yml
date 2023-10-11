@@ -1,0 +1,57 @@
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildJob
+        displayName: Build API
+        variables:
+          solution: "api/HelloBear.sln"
+          buildConfiguration: "Release"
+          apiDirectory: "api"
+        steps:
+          - bash: |
+              echo "Environment: $(ENVIRONMENT_NAME)"
+          - template: templates/build-stage.yml
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: succeeded('Build')
+    jobs:
+      - deployment: DeployAPI
+        displayName: Deploy API
+        environment: $(environment_name)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../../templates/deploy-stage.yml
+                  parameters:
+                    azure_service_connection: "$(azure_service_connection)"
+                    app_service_name: "$(app_service_name)"
+                    resource_group: "$(resource_group_main)"
+                    package_name: "HelloBear.Api.zip"
+
+  - stage: ApplyMigration
+    dependsOn: Build
+    condition: succeeded('Build')
+    jobs:
+      - deployment: ApplyMigrations
+        displayName: Apply Migrations (App and Identity migration)
+        environment: $(environment_name)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    source: current
+                    artifact: HelloBearArtifacts
+                    patterns: "**/*sql"
+                    path: "$(Pipeline.Workspace)/Migrations"
+                - task: SqlAzureDacpacDeployment@1
+                  displayName: "Apply App Migration"
+                  inputs:
+                    azureSubscription: "$(storage_service_connection)"
+                    AuthenticationType: connectionString
+                    ConnectionString: "$(connection_string)"
+                    deployType: SqlTask
+                    SqlFile: "$(Pipeline.Workspace)/Migrations/MigrationScripts/AppMigration.sql"

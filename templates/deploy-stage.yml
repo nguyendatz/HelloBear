@@ -1,0 +1,21 @@
+parameters:
+  - name: azure_service_connection
+    type: string
+  - name: app_service_name
+    type: string
+  - name: resource_group
+    type: string
+  - name: package_name
+    type: string
+
+steps:
+  - task: AzureRmWebAppDeployment@4
+    displayName: "Deploy Azure App Service"
+    inputs:
+      ConnectionType: "AzureRM"
+      azureSubscription: "${{parameters.azure_service_connection}}"
+      appType: "webApp"
+      WebAppName: "${{parameters.app_service_name}}"
+      ResourceGroupName: "${{parameters.resource_group}}"
+      DeploymentType: "zipDeploy"
+      Package: "$(Pipeline.Workspace)/**/HelloBearArtifacts/${{parameters.package_name}}"

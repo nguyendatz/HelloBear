@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>HelloBear.Application</RootNamespace>
+        <AssemblyName>HelloBear.Application</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Auth\EventHandlers\**" />
+      <Compile Remove="Auth\Queries\**" />
+      <Compile Remove="Users\Commands\ResendInvitation\**" />
+      <Compile Remove="Users\EventHandlers\**" />
+      <EmbeddedResource Remove="Auth\EventHandlers\**" />
+      <EmbeddedResource Remove="Auth\Queries\**" />
+      <EmbeddedResource Remove="Users\Commands\ResendInvitation\**" />
+      <EmbeddedResource Remove="Users\EventHandlers\**" />
+      <None Remove="Auth\EventHandlers\**" />
+      <None Remove="Auth\Queries\**" />
+      <None Remove="Users\Commands\ResendInvitation\**" />
+      <None Remove="Users\EventHandlers\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
+        <PackageReference Include="MediatR" Version="12.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.8" />
+        <PackageReference Include="Hashids.net" Version="1.7.0" />
+        <PackageReference Include="QRCoder" Version="1.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\HelloBear.Domain\HelloBear.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Auth\" />
+      <None Remove="Auth\Commands\" />
+      <None Remove="Auth\Commands\ForgotPassword\reset-password.liquid" />
+      <None Remove="Auth\Commands\Login\" />
+      <None Remove="Auth\Commands\UpdatePassword\" />
+      <None Remove="Auth\Commands\UpdatePassword\confirmed-password-changed.liquid" />
+      <None Remove="Auth\Queries\" />
+      <None Remove="Auth\EventHandlers\" />
+      <None Remove="Auth\Commands\ForgotPassword\" />
+      <None Remove="Users\" />
+      <None Remove="Users\Commands\" />
+      <None Remove="Users\Commands\SendInvitation\send-invitation.liquid" />
+      <None Remove="Users\Queries\" />
+      <None Remove="Users\EventHandlers\" />
+      <None Remove="Users\Commands\CreateUser\" />
+      <None Remove="Users\Commands\UpdateUser\" />
+      <None Remove="Users\Commands\DeleteUser\" />
+      <None Remove="Users\Queries\GetUsersWithPagination\" />
+      <None Remove="Users\Commands\ResendInvitation\" />
+      <None Remove="Auth\Shared\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="Users\EventHandlers\SendInvitation\SendInvitationEvent.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Auth\Commands\ForgotPassword\reset-password.liquid">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Auth\Commands\UpdatePassword\confirmed-password-changed.liquid" />
+      <EmbeddedResource Include="Users\EventHandlers\SendInvitation\send-invitation.liquid">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Auth\Commands\ForgotPassword\" />
+      <Folder Include="Classes\Commands\CreateClass\" />
+      <Folder Include="Users\Commands\" />
+      <Folder Include="Users\Commands\CreateUser\" />
+      <Folder Include="Users\Commands\UpdateUser\" />
+      <Folder Include="Users\Commands\DeleteUser\" />
+      <Folder Include="Users\Queries\GetUserDetail\" />
+    </ItemGroup>
+</Project>

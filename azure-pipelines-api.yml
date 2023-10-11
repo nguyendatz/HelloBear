@@ -1,0 +1,13 @@
+trigger:
+  branches:
+    include:
+      - dev
+  paths:
+    include:
+      - api
+
+pool:
+  vmImage: "windows-latest"
+
+stages:
+  - template: api/pipelines/azure-pipelines.yml

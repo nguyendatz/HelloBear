@@ -1,0 +1,22 @@
+{
+  "trailingComma": "none",
+  "useTabs": false,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "printWidth": 120,
+  "importOrder": [
+    "^apis(.*)$",
+    "^app/(.*)$",
+    "^auth/(.*)",
+    "^assets/(.*)$",
+    "^common/(.*)$",
+    "^components/(.*)$",
+    "^configs/(.*)$",
+    "^features/(.*)$",
+    "^styles/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

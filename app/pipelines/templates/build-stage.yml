@@ -1,0 +1,43 @@
+steps:
+  - task: NodeTool@0
+    displayName: 'Install Node'
+    inputs:
+      versionSpec: 16.x
+
+  - task: Cache@2
+    displayName: 'Cache npm'
+    inputs:
+      key: '"$(npmCacheKeyPrefix)" | "$(Agent.OS)" | $(Build.SourcesDirectory)/$(webAppDirectory)/package.json'
+      path: $(npm_config_cache)
+      cacheHitVar: NPM_CACHE_RESTORED
+
+  - task: Npm@1
+    displayName: 'Install npm'
+    inputs:
+      command: custom
+      workingDir: $(webAppDirectory)
+      customCommand: 'install --legacy-peer-deps'
+    condition: ne(variables.NPM_CACHE_RESTORED, 'true')
+
+  - task: Npm@1
+    displayName: 'Build Client App'
+    inputs:
+      command: custom
+      workingDir: $(webAppDirectory)
+      verbose: false
+      customCommand: 'run build:$(environment_name)'
+
+  - task: ArchiveFiles@2
+    displayName: 'Archive client app files'
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)/$(webAppDirectory)/build'
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/client-app.zip
+      replaceExistingArchive: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish artifacts'
+    inputs:
+      targetPath: $(Build.ArtifactStagingDirectory)
+      artifactName: HelloBearArtifacts
